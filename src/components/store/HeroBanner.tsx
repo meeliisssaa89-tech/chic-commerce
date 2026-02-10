@@ -1,18 +1,28 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import { mockBanners } from "@/data/mockProducts";
+import { useProducts } from "@/contexts/ProductsContext";
 
 const HeroBanner = () => {
+  const { banners } = useProducts();
   const [current, setCurrent] = useState(0);
-  const banners = mockBanners;
 
   useEffect(() => {
+    if (banners.length === 0) return;
+    
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % banners.length);
     }, 5000);
     return () => clearInterval(timer);
   }, [banners.length]);
+
+  if (banners.length === 0) {
+    return (
+      <div className="relative w-full h-[60vh] md:h-[75vh] bg-secondary overflow-hidden flex items-center justify-center">
+        <p className="text-muted-foreground">لا توجد بانرات</p>
+      </div>
+    );
+  }
 
   const goTo = (index: number) => setCurrent(index);
   const goPrev = () => setCurrent((prev) => (prev - 1 + banners.length) % banners.length);

@@ -3,12 +3,13 @@ import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import ProductCard from "@/components/store/ProductCard";
-import { mockProducts } from "@/data/mockProducts";
+import { useProducts } from "@/contexts/ProductsContext";
 
 const SearchPage = () => {
+  const { products } = useProducts();
   const [query, setQuery] = useState("");
   const results = query.length >= 2
-    ? mockProducts.filter((p) => p.name_ar.includes(query) || p.name.toLowerCase().includes(query.toLowerCase()))
+    ? products.filter((p) => p.name_ar.includes(query) || p.name.toLowerCase().includes(query.toLowerCase()))
     : [];
 
   return (

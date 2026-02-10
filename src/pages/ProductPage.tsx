@@ -2,14 +2,15 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ShoppingBag, Minus, Plus } from "lucide-react";
-import { mockProducts } from "@/data/mockProducts";
+import { useProducts } from "@/contexts/ProductsContext";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/store/ProductCard";
 
 const ProductPage = () => {
   const { slug } = useParams();
-  const product = mockProducts.find((p) => p.slug === slug);
+  const { getProductBySlug, getProductsByCategory } = useProducts();
+  const product = getProductBySlug(slug || "");
   const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
@@ -23,8 +24,9 @@ const ProductPage = () => {
   const hasDiscount = product.discount_price && product.discount_price < product.price;
   const finalPrice = hasDiscount ? product.discount_price! : product.price;
 
-  const related = mockProducts
-    .filter((p) => p.category_slug === product.category_slug && p.id !== product.id)
+  const allCategoryProducts = getProductsByCategory(product.category_slug);
+  const related = allCategoryProducts
+    .filter((p) => p.id !== product.id)
     .slice(0, 4);
 
   const handleAddToCart = () => {
