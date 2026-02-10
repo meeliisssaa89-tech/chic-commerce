@@ -5,6 +5,7 @@ export interface PaymentMethod {
   name: string;
   nameAr: string;
   icon: string;
+  image?: string;
   description: string;
   descriptionAr: string;
   isActive: boolean;
@@ -28,6 +29,7 @@ const defaultPaymentMethods: PaymentMethod[] = [
     name: "Credit/Debit Card",
     nameAr: "بطاقة الائتمان/الخصم",
     icon: "💳",
+    image: undefined,
     description: "Pay securely with your credit or debit card",
     descriptionAr: "ادفع بأمان باستخدام بطاقتك الائتمانية أو الخصم",
     isActive: true,
@@ -40,6 +42,7 @@ const defaultPaymentMethods: PaymentMethod[] = [
     name: "Bank Transfer",
     nameAr: "تحويل بنكي",
     icon: "🏦",
+    image: undefined,
     description: "Transfer funds directly to our bank account",
     descriptionAr: "حول الأموال مباشرة إلى حسابنا البنكي",
     isActive: true,
@@ -52,6 +55,7 @@ const defaultPaymentMethods: PaymentMethod[] = [
     name: "Cash on Delivery",
     nameAr: "الدفع عند الاستلام",
     icon: "💰",
+    image: undefined,
     description: "Pay when your order arrives",
     descriptionAr: "ادفع عند وصول طلبك",
     isActive: true,

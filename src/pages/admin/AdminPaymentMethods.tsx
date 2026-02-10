@@ -4,6 +4,7 @@ import { Plus, Edit, Trash2, X, Save, ToggleLeft, ToggleRight } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import ImageUpload from "@/components/ui/image-upload";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,7 @@ const AdminPaymentMethods = () => {
     name: "",
     nameAr: "",
     icon: "💳",
+    image: undefined,
     description: "",
     descriptionAr: "",
     isActive: true,
@@ -202,6 +204,14 @@ const AdminPaymentMethods = () => {
                   </div>
                 </div>
 
+                {/* Image Upload */}
+                <ImageUpload
+                  label="لوجو طريقة الدفع"
+                  value={formData.image}
+                  onChange={(image) => setFormData({ ...formData, image })}
+                  maxSizeMB={5}
+                />
+
                 {/* Description */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -336,7 +346,15 @@ const AdminPaymentMethods = () => {
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <span className="text-3xl">{method.icon}</span>
+                      {method.image ? (
+                        <img
+                          src={method.image}
+                          alt={method.nameAr}
+                          className="w-16 h-16 object-contain rounded"
+                        />
+                      ) : (
+                        <span className="text-3xl">{method.icon}</span>
+                      )}
                       <div>
                         <h3 className="font-bold">{method.nameAr}</h3>
                         <p className="text-xs text-muted-foreground">
