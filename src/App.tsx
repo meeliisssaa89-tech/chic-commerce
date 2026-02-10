@@ -9,6 +9,7 @@ import { SettingsProvider } from "@/contexts/SettingsContext";
 import { OrdersProvider } from "@/contexts/OrdersContext";
 import { ColorSettingsProvider } from "@/contexts/ColorSettingsContext";
 import { PaymentMethodsProvider } from "@/contexts/PaymentMethodsContext";
+import { BottomBarProvider } from "@/contexts/BottomBarContext";
 
 import StoreLayout from "@/components/store/StoreLayout";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -19,6 +20,7 @@ import ProductPage from "./pages/ProductPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import SearchPage from "./pages/SearchPage";
 import ContactPage from "./pages/ContactPage";
+import MyOrdersPage from "./pages/MyOrdersPage";
 import NotFound from "./pages/NotFound";
 
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -29,6 +31,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminBanners from "./pages/admin/AdminBanners";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminPaymentMethods from "./pages/admin/AdminPaymentMethods";
+import AdminBottomBar from "./pages/admin/AdminBottomBar";
 
 const queryClient = new QueryClient();
 
@@ -40,7 +43,8 @@ const App = () => (
           <ProductsProvider>
             <OrdersProvider>
               <PaymentMethodsProvider>
-                <CartProvider>
+                <BottomBarProvider>
+                  <CartProvider>
               <Toaster />
               <Sonner />
               <BrowserRouter>
@@ -51,8 +55,9 @@ const App = () => (
                     <Route path="/category/:slug" element={<CategoryPage />} />
                     <Route path="/product/:slug" element={<ProductPage />} />
                     <Route path="/checkout" element={<CheckoutPage />} />
-                    <Route path="/search" element={<SearchPage />} />
-                    <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/search" element={<SearchPage />} />
+                  <Route path="/my-orders" element={<MyOrdersPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
                   </Route>
 
                   {/* Admin */}
@@ -64,13 +69,15 @@ const App = () => (
                     <Route path="orders" element={<AdminOrders />} />
                     <Route path="banners" element={<AdminBanners />} />
                     <Route path="payment-methods" element={<AdminPaymentMethods />} />
+                    <Route path="bottom-bar" element={<AdminBottomBar />} />
                     <Route path="settings" element={<AdminSettings />} />
                   </Route>
 
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
-                </CartProvider>
+                  </CartProvider>
+                </BottomBarProvider>
               </PaymentMethodsProvider>
             </OrdersProvider>
           </ProductsProvider>

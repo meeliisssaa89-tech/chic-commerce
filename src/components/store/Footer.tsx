@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useBottomBar } from "@/contexts/BottomBarContext";
 
 const Footer = () => {
   const { settings } = useSettings();
+  const { getVisibleSections } = useBottomBar();
+  const visibleSections = getVisibleSections();
 
   return (
     <footer className="bg-charcoal text-cream py-12 pb-24 lg:pb-12">
@@ -26,9 +29,15 @@ const Footer = () => {
           <div>
             <h4 className="font-bold mb-4">روابط سريعة</h4>
             <nav className="flex flex-col gap-2">
-              <Link to="/category/shoes" className="text-cream/70 hover:text-accent transition-colors text-sm">أحذية</Link>
-              <Link to="/category/belts" className="text-cream/70 hover:text-accent transition-colors text-sm">أحزمة</Link>
-              <Link to="/category/wallets" className="text-cream/70 hover:text-accent transition-colors text-sm">محافظ</Link>
+              {visibleSections.map((section) => (
+                <Link
+                  key={section.id}
+                  to={`/category/${section.slug}`}
+                  className="text-cream/70 hover:text-accent transition-colors text-sm"
+                >
+                  {section.name_ar}
+                </Link>
+              ))}
               <Link to="/contact" className="text-cream/70 hover:text-accent transition-colors text-sm">تواصل معنا</Link>
             </nav>
           </div>
