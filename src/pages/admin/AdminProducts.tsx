@@ -4,6 +4,7 @@ import { Plus, Edit, Trash2, X, Save, Plus as PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ImageUpload } from "@/components/ui/image-upload";
 import {
   Dialog,
   DialogContent,
@@ -215,6 +216,19 @@ const AdminProducts = () => {
                       placeholder="السعر بعد الخصم"
                     />
                   </div>
+                </div>
+
+                {/* Image */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">صورة المنتج</label>
+                  <ImageUpload
+                    value={formData.images[0]}
+                    onChange={(value) =>
+                      setFormData({ ...formData, images: [value] })
+                    }
+                    label=""
+                    maxSizeMB={3}
+                  />
                 </div>
 
                 {/* Category */}

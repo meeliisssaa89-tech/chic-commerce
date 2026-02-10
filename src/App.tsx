@@ -7,6 +7,8 @@ import { CartProvider } from "@/contexts/CartContext";
 import { ProductsProvider } from "@/contexts/ProductsContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import { OrdersProvider } from "@/contexts/OrdersContext";
+import { ColorSettingsProvider } from "@/contexts/ColorSettingsContext";
+import { PaymentMethodsProvider } from "@/contexts/PaymentMethodsContext";
 
 import StoreLayout from "@/components/store/StoreLayout";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -26,16 +28,19 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminBanners from "./pages/admin/AdminBanners";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminPaymentMethods from "./pages/admin/AdminPaymentMethods";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <SettingsProvider>
-        <ProductsProvider>
-          <OrdersProvider>
-            <CartProvider>
+      <ColorSettingsProvider>
+        <SettingsProvider>
+          <ProductsProvider>
+            <OrdersProvider>
+              <PaymentMethodsProvider>
+                <CartProvider>
               <Toaster />
               <Sonner />
               <BrowserRouter>
@@ -58,16 +63,19 @@ const App = () => (
                     <Route path="categories" element={<AdminCategories />} />
                     <Route path="orders" element={<AdminOrders />} />
                     <Route path="banners" element={<AdminBanners />} />
+                    <Route path="payment-methods" element={<AdminPaymentMethods />} />
                     <Route path="settings" element={<AdminSettings />} />
                   </Route>
 
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
-            </CartProvider>
-          </OrdersProvider>
-        </ProductsProvider>
-      </SettingsProvider>
+                </CartProvider>
+              </PaymentMethodsProvider>
+            </OrdersProvider>
+          </ProductsProvider>
+        </SettingsProvider>
+      </ColorSettingsProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

@@ -4,6 +4,7 @@ import { Plus, Edit, Trash2, X, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ImageUpload } from "@/components/ui/image-upload";
 import {
   Dialog,
   DialogContent,
@@ -151,27 +152,16 @@ const AdminCategories = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    رابط الصورة
-                  </label>
-                  <Input
+                  <label className="block text-sm font-medium mb-2">صورة الفئة</label>
+                  <ImageUpload
                     value={formData.image_url}
-                    onChange={(e) =>
-                      setFormData({ ...formData, image_url: e.target.value })
+                    onChange={(value) =>
+                      setFormData({ ...formData, image_url: value })
                     }
-                    placeholder="/image.jpg"
+                    label=""
+                    maxSizeMB={3}
                   />
                 </div>
-
-                {formData.image_url && (
-                  <div className="border rounded-lg p-4">
-                    <img
-                      src={formData.image_url}
-                      alt="Preview"
-                      className="w-full h-40 object-cover rounded"
-                    />
-                  </div>
-                )}
 
                 <div>
                   <label className="block text-sm font-medium mb-2">
