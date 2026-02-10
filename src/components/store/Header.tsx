@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useSettings } from "@/contexts/SettingsContext";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { totalItems, setIsOpen } = useCart();
+  const { settings } = useSettings();
 
   const navLinks = [
     { label: "الرئيسية", href: "/" },
@@ -23,8 +25,15 @@ const Header = () => {
           <Menu className="w-6 h-6" />
         </button>
 
-        <Link to="/" className="font-display text-2xl font-bold tracking-wider text-charcoal">
-          TESTATORO
+        <Link to="/" className="flex items-center gap-2 font-display text-xl md:text-2xl font-bold tracking-wider text-charcoal hover:text-accent transition-colors">
+          {settings.logo && (
+            <img 
+              src={settings.logo} 
+              alt={settings.siteName} 
+              className="h-8 md:h-10 object-contain"
+            />
+          )}
+          <span className="hidden md:inline">{settings.siteNameAr}</span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8">

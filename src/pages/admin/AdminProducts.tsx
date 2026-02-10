@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Edit, Trash2, X, Save } from "lucide-react";
+import { Plus, Edit, Trash2, X, Save, Plus as PlusIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,8 @@ const AdminProducts = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<Omit<Product, "id"> | null>(null);
+  const [newColor, setNewColor] = useState("");
+  const [newSize, setNewSize] = useState("");
 
   const defaultFormData: Omit<Product, "id"> = {
     name: "",
@@ -43,6 +45,8 @@ const AdminProducts = () => {
       setEditingId(null);
       setFormData(defaultFormData);
     }
+    setNewColor("");
+    setNewSize("");
     setDialogOpen(true);
   };
 
@@ -50,6 +54,46 @@ const AdminProducts = () => {
     setDialogOpen(false);
     setEditingId(null);
     setFormData(null);
+    setNewColor("");
+    setNewSize("");
+  };
+
+  const handleAddColor = () => {
+    if (newColor && formData && !formData.colors.includes(newColor)) {
+      setFormData({
+        ...formData,
+        colors: [...formData.colors, newColor],
+      });
+      setNewColor("");
+    }
+  };
+
+  const handleRemoveColor = (colorToRemove: string) => {
+    if (formData) {
+      setFormData({
+        ...formData,
+        colors: formData.colors.filter((c) => c !== colorToRemove),
+      });
+    }
+  };
+
+  const handleAddSize = () => {
+    if (newSize && formData && !formData.sizes.includes(newSize)) {
+      setFormData({
+        ...formData,
+        sizes: [...formData.sizes, newSize],
+      });
+      setNewSize("");
+    }
+  };
+
+  const handleRemoveSize = (sizeToRemove: string) => {
+    if (formData) {
+      setFormData({
+        ...formData,
+        sizes: formData.sizes.filter((s) => s !== sizeToRemove),
+      });
+    }
   };
 
   const handleSave = () => {
@@ -90,7 +134,7 @@ const AdminProducts = () => {
               إضافة منتج
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingId ? "تعديل المنتج" : "إضافة منتج جديد"}
@@ -98,7 +142,8 @@ const AdminProducts = () => {
             </DialogHeader>
             {formData && (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                {/* Basic Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       اسم المنتج (عربي)
@@ -136,7 +181,8 @@ const AdminProducts = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                {/* Pricing */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">السعر</label>
                     <Input
@@ -171,7 +217,8 @@ const AdminProducts = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                {/* Category */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       الفئة (عربي)
@@ -204,40 +251,105 @@ const AdminProducts = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    الألوان (مفصولة بفواصل)
-                  </label>
-                  <Input
-                    value={formData.colors.join(", ")}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        colors: e.target.value
-                          .split(",")
-                          .map((c) => c.trim()),
-                      })
-                    }
-                    placeholder="أسود، بني، أحمر"
-                  />
+                {/* Colors */}
+                <div className="border rounded-lg p-4 bg-secondary/20">
+                  <label className="block text-sm font-bold mb-3">الألوان</label>
+                  <div className="space-y-3">
+                    {formData.colors.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {formData.colors.map((color) => (
+                          <motion.div
+                            key={color}
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            className="flex items-center gap-2 bg-white border border-input rounded-full px-3 py-1"
+                          >
+                            <span className="text-sm">{color}</span>
+                            <button
+                              onClick={() => handleRemoveColor(color)}
+                              className="text-destructive hover:text-destructive/80"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </motion.div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <Input
+                        value={newColor}
+                        onChange={(e) => setNewColor(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            handleAddColor();
+                          }
+                        }}
+                        placeholder="أدخل اسم اللون..."
+                      />
+                      <Button
+                        onClick={handleAddColor}
+                        variant="outline"
+                        size="sm"
+                        className="gap-1"
+                      >
+                        <PlusIcon className="w-4 h-4" />
+                        إضافة
+                      </Button>
+                    </div>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    الأحجام (مفصولة بفواصل)
-                  </label>
-                  <Input
-                    value={formData.sizes.join(", ")}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        sizes: e.target.value.split(",").map((s) => s.trim()),
-                      })
-                    }
-                    placeholder="40، 41، 42"
-                  />
+                {/* Sizes */}
+                <div className="border rounded-lg p-4 bg-secondary/20">
+                  <label className="block text-sm font-bold mb-3">الأحجام</label>
+                  <div className="space-y-3">
+                    {formData.sizes.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {formData.sizes.map((size) => (
+                          <motion.div
+                            key={size}
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
+                            className="flex items-center gap-2 bg-white border border-input rounded-full px-3 py-1"
+                          >
+                            <span className="text-sm font-bold">{size}</span>
+                            <button
+                              onClick={() => handleRemoveSize(size)}
+                              className="text-destructive hover:text-destructive/80"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </motion.div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex gap-2">
+                      <Input
+                        value={newSize}
+                        onChange={(e) => setNewSize(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter") {
+                            handleAddSize();
+                          }
+                        }}
+                        placeholder="أدخل الحجم (40، 41، L، XL...)..."
+                      />
+                      <Button
+                        onClick={handleAddSize}
+                        variant="outline"
+                        size="sm"
+                        className="gap-1"
+                      >
+                        <PlusIcon className="w-4 h-4" />
+                        إضافة
+                      </Button>
+                    </div>
+                  </div>
                 </div>
 
+                {/* Description */}
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     الوصف (عربي)
@@ -256,7 +368,8 @@ const AdminProducts = () => {
                   />
                 </div>
 
-                <div className="flex items-center gap-2">
+                {/* Featured */}
+                <div className="flex items-center gap-2 p-3 bg-secondary/30 rounded-lg">
                   <input
                     type="checkbox"
                     id="featured"
@@ -268,12 +381,13 @@ const AdminProducts = () => {
                       })
                     }
                   />
-                  <label htmlFor="featured" className="text-sm font-medium">
-                    منتج مميز
+                  <label htmlFor="featured" className="text-sm font-medium cursor-pointer">
+                    منتج مميز (يظهر في الصفحة الرئيسية)
                   </label>
                 </div>
 
-                <div className="flex justify-end gap-2">
+                {/* Actions */}
+                <div className="flex justify-end gap-2 pt-4 border-t">
                   <Button
                     variant="outline"
                     onClick={handleCloseDialog}
@@ -302,6 +416,8 @@ const AdminProducts = () => {
                   <th className="text-right p-4 font-medium">المنتج</th>
                   <th className="text-right p-4 font-medium">الفئة</th>
                   <th className="text-right p-4 font-medium">السعر</th>
+                  <th className="text-right p-4 font-medium">الألوان</th>
+                  <th className="text-right p-4 font-medium">الأحجام</th>
                   <th className="text-right p-4 font-medium">مميز</th>
                   <th className="text-right p-4 font-medium">إجراءات</th>
                 </tr>
@@ -341,6 +457,40 @@ const AdminProducts = () => {
                       ) : (
                         <span className="font-bold">{product.price} ر.س</span>
                       )}
+                    </td>
+                    <td className="p-4">
+                      <div className="flex flex-wrap gap-1">
+                        {product.colors.slice(0, 2).map((color) => (
+                          <span
+                            key={color}
+                            className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded"
+                          >
+                            {color}
+                          </span>
+                        ))}
+                        {product.colors.length > 2 && (
+                          <span className="text-xs text-muted-foreground">
+                            +{product.colors.length - 2}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex flex-wrap gap-1">
+                        {product.sizes.slice(0, 2).map((size) => (
+                          <span
+                            key={size}
+                            className="bg-secondary text-secondary-foreground text-xs px-2 py-1 rounded"
+                          >
+                            {size}
+                          </span>
+                        ))}
+                        {product.sizes.length > 2 && (
+                          <span className="text-xs text-muted-foreground">
+                            +{product.sizes.length - 2}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="p-4">
                       {product.featured ? (
