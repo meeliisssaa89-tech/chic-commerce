@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface ProductCardProps {
   id: string;
@@ -15,6 +16,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ id, name_ar, slug, price, discount_price, image, category_ar }: ProductCardProps) => {
   const { addItem } = useCart();
+  const { settings } = useSettings();
   const hasDiscount = discount_price && discount_price < price;
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -65,10 +67,10 @@ const ProductCard = ({ id, name_ar, slug, price, discount_price, image, category
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-base">
-                  {hasDiscount ? discount_price : price} ر.س
+                  {hasDiscount ? discount_price : price} {settings.currencySymbol}
                 </span>
                 {hasDiscount && (
-                  <span className="text-muted-foreground text-xs line-through">{price} ر.س</span>
+                  <span className="text-muted-foreground text-xs line-through">{price} {settings.currencySymbol}</span>
                 )}
               </div>
               <motion.button

@@ -1,12 +1,14 @@
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import ProductCard from "@/components/store/ProductCard";
-import { mockProducts, mockCategories } from "@/data/mockProducts";
+import { useProducts } from "@/contexts/ProductsContext";
+import { mockCategories } from "@/data/mockProducts";
 
 const CategoryPage = () => {
   const { slug } = useParams();
+  const { getProductsByCategory } = useProducts();
   const category = mockCategories.find((c) => c.slug === slug);
-  const products = mockProducts.filter((p) => p.category_slug === slug);
+  const products = getProductsByCategory(slug || "");
 
   return (
     <div className="container py-8 px-4">

@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import ProductCard from "./ProductCard";
-import { mockProducts } from "@/data/mockProducts";
+import { useProducts } from "@/contexts/ProductsContext";
 
 const FeaturedProducts = () => {
-  const featured = mockProducts.filter((p) => p.featured);
+  const { getFeaturedProducts } = useProducts();
+  const featured = getFeaturedProducts();
 
   return (
     <section className="py-16 px-4 bg-secondary/50">

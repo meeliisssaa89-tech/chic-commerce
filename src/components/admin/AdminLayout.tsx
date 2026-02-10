@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X, Image } from "lucide-react";
+import { LayoutDashboard, Package, ShoppingCart, Settings, LogOut, Menu, X, Image, Layers, CreditCard, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { label: "لوحة التحكم", href: "/admin", icon: LayoutDashboard },
   { label: "المنتجات", href: "/admin/products", icon: Package },
+  { label: "الفئات", href: "/admin/categories", icon: Layers },
   { label: "الطلبات", href: "/admin/orders", icon: ShoppingCart },
   { label: "البانرات", href: "/admin/banners", icon: Image },
+  { label: "طرق الدفع", href: "/admin/payment-methods", icon: CreditCard },
+  { label: "البار السفلي", href: "/admin/bottom-bar", icon: Eye },
   { label: "الإعدادات", href: "/admin/settings", icon: Settings },
 ];
 
