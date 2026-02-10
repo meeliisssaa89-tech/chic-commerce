@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ShoppingBag, Minus, Plus } from "lucide-react";
 import { useProducts } from "@/contexts/ProductsContext";
 import { useCart } from "@/contexts/CartContext";
+import { useSettings } from "@/contexts/SettingsContext";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/store/ProductCard";
 
@@ -12,6 +13,7 @@ const ProductPage = () => {
   const { getProductBySlug, getProductsByCategory } = useProducts();
   const product = getProductBySlug(slug || "");
   const { addItem } = useCart();
+  const { settings } = useSettings();
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -63,10 +65,10 @@ const ProductPage = () => {
           <h1 className="font-display text-3xl font-bold mb-4">{product.name_ar}</h1>
 
           <div className="flex items-center gap-3 mb-6">
-            <span className="text-2xl font-bold">{finalPrice} ر.س</span>
+            <span className="text-2xl font-bold">{finalPrice} {settings.currencySymbol}</span>
             {hasDiscount && (
               <>
-                <span className="text-lg text-muted-foreground line-through">{product.price} ر.س</span>
+                <span className="text-lg text-muted-foreground line-through">{product.price} {settings.currencySymbol}</span>
                 <span className="bg-accent text-accent-foreground px-2 py-1 text-xs font-bold rounded">
                   خصم {Math.round(((product.price - product.discount_price!) / product.price) * 100)}%
                 </span>
