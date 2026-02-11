@@ -1,12 +1,13 @@
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import ProductCard from "@/components/store/ProductCard";
-import { mockProducts, mockCategories } from "@/data/mockProducts";
+import { useProducts, useCategories } from "@/hooks/useSupabaseData";
 
 const CategoryPage = () => {
   const { slug } = useParams();
-  const category = mockCategories.find((c) => c.slug === slug);
-  const products = mockProducts.filter((p) => p.category_slug === slug);
+  const { data: categories = [] } = useCategories();
+  const { data: products = [], isLoading } = useProducts(slug);
+  const category = categories.find((c) => c.slug === slug);
 
   return (
     <div className="container py-8 px-4">
@@ -18,7 +19,13 @@ const CategoryPage = () => {
         {category?.name_ar || "المنتجات"}
       </motion.h1>
 
-      {products.length === 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="aspect-square bg-secondary rounded-lg animate-pulse" />
+          ))}
+        </div>
+      ) : products.length === 0 ? (
         <p className="text-center text-muted-foreground py-16">لا توجد منتجات في هذه الفئة حالياً</p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
@@ -30,8 +37,8 @@ const CategoryPage = () => {
               slug={product.slug}
               price={product.price}
               discount_price={product.discount_price}
-              image={product.images[0]}
-              category_ar={product.category_ar}
+              image={product.images?.[0] || "/placeholder.svg"}
+              category_ar={product.categories?.name_ar}
             />
           ))}
         </div>

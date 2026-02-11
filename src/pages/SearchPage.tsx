@@ -3,13 +3,11 @@ import { motion } from "framer-motion";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import ProductCard from "@/components/store/ProductCard";
-import { mockProducts } from "@/data/mockProducts";
+import { useSearchProducts } from "@/hooks/useSupabaseData";
 
 const SearchPage = () => {
   const [query, setQuery] = useState("");
-  const results = query.length >= 2
-    ? mockProducts.filter((p) => p.name_ar.includes(query) || p.name.toLowerCase().includes(query.toLowerCase()))
-    : [];
+  const { data: results = [], isLoading } = useSearchProducts(query);
 
   return (
     <div className="container py-8 px-4">
@@ -29,7 +27,7 @@ const SearchPage = () => {
       {query.length >= 2 && (
         <div>
           <p className="text-muted-foreground text-sm mb-4 text-center">
-            {results.length} نتيجة لـ "{query}"
+            {isLoading ? "جاري البحث..." : `${results.length} نتيجة لـ "${query}"`}
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {results.map((p) => (
@@ -40,8 +38,8 @@ const SearchPage = () => {
                 slug={p.slug}
                 price={p.price}
                 discount_price={p.discount_price}
-                image={p.images[0]}
-                category_ar={p.category_ar}
+                image={p.images?.[0] || "/placeholder.svg"}
+                category_ar={p.categories?.name_ar}
               />
             ))}
           </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, Search, ShoppingBag, X } from "lucide-react";
+import { Menu, Search, ShoppingBag, X, MapPin } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 
 const Header = () => {
@@ -13,6 +13,7 @@ const Header = () => {
     { label: "أحذية", href: "/category/shoes" },
     { label: "أحزمة", href: "/category/belts" },
     { label: "محافظ", href: "/category/wallets" },
+    { label: "تتبع طلبك", href: "/track-order" },
     { label: "تواصل معنا", href: "/contact" },
   ];
 
@@ -39,6 +40,9 @@ const Header = () => {
           <Link to="/search" className="p-2 hover:text-accent transition-colors">
             <Search className="w-5 h-5" />
           </Link>
+          <Link to="/track-order" className="p-2 hover:text-accent transition-colors hidden lg:block">
+            <MapPin className="w-5 h-5" />
+          </Link>
           <button onClick={() => setIsOpen(true)} className="p-2 relative hover:text-accent transition-colors">
             <ShoppingBag className="w-5 h-5" />
             {totalItems > 0 && (
@@ -54,35 +58,15 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {menuOpen && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 z-50"
-              onClick={() => setMenuOpen(false)}
-            />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
-              className="fixed top-0 right-0 h-full w-72 bg-background z-50 shadow-2xl p-6"
-            >
-              <button onClick={() => setMenuOpen(false)} className="mb-8">
-                <X className="w-6 h-6" />
-              </button>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-50" onClick={() => setMenuOpen(false)} />
+            <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "tween", duration: 0.3 }} className="fixed top-0 right-0 h-full w-72 bg-background z-50 shadow-2xl p-6">
+              <button onClick={() => setMenuOpen(false)} className="mb-8"><X className="w-6 h-6" /></button>
               <nav className="flex flex-col gap-4">
                 {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    to={link.href}
-                    onClick={() => setMenuOpen(false)}
-                    className="text-lg font-medium py-2 border-b border-border hover:text-accent transition-colors"
-                  >
+                  <Link key={link.href} to={link.href} onClick={() => setMenuOpen(false)} className="text-lg font-medium py-2 border-b border-border hover:text-accent transition-colors">
                     {link.label}
                   </Link>
                 ))}
