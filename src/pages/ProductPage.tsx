@@ -2,19 +2,38 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ShoppingBag, Minus, Plus } from "lucide-react";
-import { mockProducts } from "@/data/mockProducts";
+import { useProduct, useProducts } from "@/hooks/useSupabaseData";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/store/ProductCard";
 
 const ProductPage = () => {
   const { slug } = useParams();
-  const product = mockProducts.find((p) => p.slug === slug);
+  const { data: product, isLoading } = useProduct(slug || "");
   const { addItem } = useCart();
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [addedAnimation, setAddedAnimation] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(0);
+
+  const categorySlug = product?.categories?.slug;
+  const { data: allProducts = [] } = useProducts(categorySlug);
+  const related = allProducts.filter((p) => p.id !== product?.id).slice(0, 4);
+
+  if (isLoading) {
+    return (
+      <div className="container py-8 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="aspect-square bg-secondary rounded-lg animate-pulse" />
+          <div className="space-y-4">
+            <div className="h-8 bg-secondary rounded animate-pulse w-3/4" />
+            <div className="h-6 bg-secondary rounded animate-pulse w-1/2" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!product) {
     return <div className="container py-16 text-center text-muted-foreground">المنتج غير موجود</div>;
@@ -22,10 +41,9 @@ const ProductPage = () => {
 
   const hasDiscount = product.discount_price && product.discount_price < product.price;
   const finalPrice = hasDiscount ? product.discount_price! : product.price;
-
-  const related = mockProducts
-    .filter((p) => p.category_slug === product.category_slug && p.id !== product.id)
-    .slice(0, 4);
+  const images = product.images?.length ? product.images : ["/placeholder.svg"];
+  const colors = product.colors || [];
+  const sizes = product.sizes || [];
 
   const handleAddToCart = () => {
     addItem(
@@ -33,7 +51,7 @@ const ProductPage = () => {
         productId: product.id,
         name: product.name_ar,
         price: finalPrice,
-        image: product.images[0],
+        image: images[0],
         size: selectedSize,
         color: selectedColor,
       },
@@ -46,18 +64,31 @@ const ProductPage = () => {
   return (
     <div className="container py-8 px-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-        {/* Image */}
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="aspect-square bg-secondary rounded-lg overflow-hidden"
-        >
-          <img src={product.images[0]} alt={product.name_ar} className="w-full h-full object-cover" />
+        {/* Images */}
+        <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }}>
+          <div className="aspect-square bg-secondary rounded-lg overflow-hidden mb-3">
+            <img src={images[selectedImage]} alt={product.name_ar} className="w-full h-full object-cover" />
+          </div>
+          {images.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto">
+              {images.map((img, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSelectedImage(i)}
+                  className={`w-16 h-16 rounded border-2 overflow-hidden flex-shrink-0 ${
+                    i === selectedImage ? "border-accent" : "border-border"
+                  }`}
+                >
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </motion.div>
 
         {/* Details */}
         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
-          <p className="text-muted-foreground text-sm mb-2">{product.category_ar}</p>
+          <p className="text-muted-foreground text-sm mb-2">{product.categories?.name_ar}</p>
           <h1 className="font-display text-3xl font-bold mb-4">{product.name_ar}</h1>
 
           <div className="flex items-center gap-3 mb-6">
@@ -74,20 +105,17 @@ const ProductPage = () => {
 
           <p className="text-muted-foreground leading-relaxed mb-6">{product.description_ar}</p>
 
-          {/* Colors */}
-          {product.colors.length > 0 && (
+          {colors.length > 0 && (
             <div className="mb-6">
               <p className="font-medium mb-2">اللون</p>
               <div className="flex gap-2">
-                {product.colors.map((color) => (
+                {colors.map((color) => (
                   <motion.button
                     key={color}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedColor(color)}
                     className={`px-4 py-2 border rounded text-sm transition-colors ${
-                      selectedColor === color
-                        ? "border-accent bg-accent/10 font-bold"
-                        : "border-border hover:border-accent/50"
+                      selectedColor === color ? "border-accent bg-accent/10 font-bold" : "border-border hover:border-accent/50"
                     }`}
                   >
                     {color}
@@ -97,20 +125,17 @@ const ProductPage = () => {
             </div>
           )}
 
-          {/* Sizes */}
-          {product.sizes.length > 0 && (
+          {sizes.length > 0 && (
             <div className="mb-6">
               <p className="font-medium mb-2">المقاس</p>
               <div className="flex gap-2 flex-wrap">
-                {product.sizes.map((size) => (
+                {sizes.map((size) => (
                   <motion.button
                     key={size}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedSize(size)}
                     className={`w-12 h-12 border rounded flex items-center justify-center text-sm transition-colors ${
-                      selectedSize === size
-                        ? "border-accent bg-accent/10 font-bold"
-                        : "border-border hover:border-accent/50"
+                      selectedSize === size ? "border-accent bg-accent/10 font-bold" : "border-border hover:border-accent/50"
                     }`}
                   >
                     {size}
@@ -120,27 +145,19 @@ const ProductPage = () => {
             </div>
           )}
 
-          {/* Quantity */}
           <div className="mb-8">
             <p className="font-medium mb-2">الكمية</p>
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="w-10 h-10 border border-border rounded flex items-center justify-center hover:bg-secondary"
-              >
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-10 h-10 border border-border rounded flex items-center justify-center hover:bg-secondary">
                 <Minus className="w-4 h-4" />
               </button>
               <span className="font-bold text-lg w-8 text-center">{quantity}</span>
-              <button
-                onClick={() => setQuantity(quantity + 1)}
-                className="w-10 h-10 border border-border rounded flex items-center justify-center hover:bg-secondary"
-              >
+              <button onClick={() => setQuantity(quantity + 1)} className="w-10 h-10 border border-border rounded flex items-center justify-center hover:bg-secondary">
                 <Plus className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* Add to Cart */}
           <motion.div whileTap={{ scale: 0.97 }}>
             <Button
               onClick={handleAddToCart}
@@ -154,10 +171,13 @@ const ProductPage = () => {
               {addedAnimation ? "تمت الإضافة ✓" : "أضف إلى السلة"}
             </Button>
           </motion.div>
+
+          {product.stock <= 5 && product.stock > 0 && (
+            <p className="text-sm text-accent mt-3 text-center">باقي {product.stock} قطع فقط!</p>
+          )}
         </motion.div>
       </div>
 
-      {/* Related Products */}
       {related.length > 0 && (
         <section>
           <h2 className="font-display text-2xl font-bold mb-6">منتجات مشابهة</h2>
@@ -170,7 +190,7 @@ const ProductPage = () => {
                 slug={p.slug}
                 price={p.price}
                 discount_price={p.discount_price}
-                image={p.images[0]}
+                image={p.images?.[0] || "/placeholder.svg"}
               />
             ))}
           </div>

@@ -4,6 +4,7 @@ import Header from "./Header";
 import BottomNav from "./BottomNav";
 import CartDrawer from "./CartDrawer";
 import Footer from "./Footer";
+import WhatsAppButton from "./WhatsAppButton";
 
 const StoreLayout = () => {
   return (
@@ -16,6 +17,7 @@ const StoreLayout = () => {
       <Footer />
       <BottomNav />
       <CartDrawer />
+      <WhatsAppButton />
     </div>
   );
 };

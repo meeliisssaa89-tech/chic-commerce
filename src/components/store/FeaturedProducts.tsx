@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
 import ProductCard from "./ProductCard";
-import { mockProducts } from "@/data/mockProducts";
+import { useFeaturedProducts } from "@/hooks/useSupabaseData";
 
 const FeaturedProducts = () => {
-  const featured = mockProducts.filter((p) => p.featured);
+  const { data: featured = [] } = useFeaturedProducts();
+
+  if (featured.length === 0) return null;
 
   return (
     <section className="py-16 px-4 bg-secondary/50">
@@ -34,8 +36,8 @@ const FeaturedProducts = () => {
               slug={product.slug}
               price={product.price}
               discount_price={product.discount_price}
-              image={product.images[0]}
-              category_ar={product.category_ar}
+              image={product.images?.[0] || "/placeholder.svg"}
+              category_ar={product.categories?.name_ar}
             />
           ))}
         </div>

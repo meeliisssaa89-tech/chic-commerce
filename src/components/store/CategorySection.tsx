@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { mockCategories } from "@/data/mockProducts";
+import { useCategories } from "@/hooks/useSupabaseData";
 
 const container = {
   hidden: {},
@@ -13,6 +13,10 @@ const item = {
 };
 
 const CategorySection = () => {
+  const { data: categories = [] } = useCategories();
+
+  if (categories.length === 0) return null;
+
   return (
     <section className="py-16 px-4">
       <div className="container">
@@ -31,7 +35,7 @@ const CategorySection = () => {
           viewport={{ once: true }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
-          {mockCategories.map((cat) => (
+          {categories.map((cat) => (
             <motion.div key={cat.id} variants={item}>
               <Link to={`/category/${cat.slug}`}>
                 <motion.div
@@ -41,7 +45,7 @@ const CategorySection = () => {
                 >
                   <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                    style={{ backgroundImage: `url(${cat.image_url})` }}
+                    style={{ backgroundImage: `url(${cat.image_url || "/placeholder.svg"})` }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 to-transparent" />
                   <div className="absolute bottom-0 inset-x-0 p-6">
