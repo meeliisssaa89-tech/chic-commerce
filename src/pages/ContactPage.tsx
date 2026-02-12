@@ -1,7 +1,16 @@
 import { motion } from "framer-motion";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSupabaseData";
 
 const ContactPage = () => {
+  const { data: settings } = useSiteSettings();
+
+  const contactInfo = [
+    { icon: Phone, label: "الهاتف", value: settings?.store_phone || "" },
+    { icon: Mail, label: "البريد الإلكتروني", value: settings?.store_email || "" },
+    { icon: MapPin, label: "العنوان", value: settings?.store_address || "غير محدد" },
+  ].filter((item) => item.value);
+
   return (
     <div className="container py-16 px-4">
       <motion.h1
@@ -13,11 +22,7 @@ const ContactPage = () => {
       </motion.h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
-        {[
-          { icon: Phone, label: "الهاتف", value: "+966 50 000 0000" },
-          { icon: Mail, label: "البريد الإلكتروني", value: "info@testatoro.com" },
-          { icon: MapPin, label: "العنوان", value: "الرياض، المملكة العربية السعودية" },
-        ].map((item, i) => (
+        {contactInfo.map((item, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 30 }}

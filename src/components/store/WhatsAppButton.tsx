@@ -1,10 +1,14 @@
 import { motion } from "framer-motion";
 import { MessageCircle } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSupabaseData";
 
 const WhatsAppButton = () => {
+  const { data: settings } = useSiteSettings();
+  const whatsappNumber = settings?.whatsapp_number || "966500000000";
+
   return (
     <motion.a
-      href="https://wa.me/966500000000"
+      href={`https://wa.me/${whatsappNumber}`}
       target="_blank"
       rel="noopener noreferrer"
       initial={{ scale: 0 }}
