@@ -174,7 +174,7 @@ const CheckoutPage = () => {
           </div>
 
           <Button type="submit" className="w-full h-12 bg-charcoal text-cream hover:bg-accent hover:text-accent-foreground font-bold text-base mt-4" disabled={submitting}>
-            {submitting ? "جاري إرسال الطلب..." : `تأكيد الطلب — ${grandTotal.toFixed(0)} ر.س`}
+            {submitting ? "جاري إرسال الطلب..." : `تأكيد الطلب — ${grandTotal.toFixed(0)} ج.م`}
           </Button>
         </motion.form>
 
@@ -184,19 +184,19 @@ const CheckoutPage = () => {
             {items.map((item) => (
               <div key={item.id} className="flex justify-between text-sm">
                 <span>{item.name} × {item.quantity}</span>
-                <span className="font-medium">{item.price * item.quantity} ر.س</span>
+                <span className="font-medium">{item.price * item.quantity} ج.م</span>
               </div>
             ))}
           </div>
           <div className="border-t border-border pt-3 space-y-2">
-            <div className="flex justify-between text-sm"><span>المجموع الفرعي</span><span>{totalPrice} ر.س</span></div>
-            <div className="flex justify-between text-sm"><span>الشحن</span><span>{shippingCost === 0 ? "مجاني" : `${shippingCost} ر.س`}</span></div>
+            <div className="flex justify-between text-sm"><span>المجموع الفرعي</span><span>{totalPrice} ج.م</span></div>
+            <div className="flex justify-between text-sm"><span>الشحن</span><span>{shippingCost === 0 ? "مجاني" : `${shippingCost} ج.م`}</span></div>
             {discountAmount > 0 && (
-              <div className="flex justify-between text-sm text-accent"><span>الخصم</span><span>-{discountAmount.toFixed(0)} ر.س</span></div>
+              <div className="flex justify-between text-sm text-accent"><span>الخصم</span><span>-{discountAmount.toFixed(0)} ج.م</span></div>
             )}
             <div className="flex justify-between font-bold text-lg pt-2 border-t border-border">
               <span>الإجمالي</span>
-              <span>{grandTotal.toFixed(0)} ر.س</span>
+              <span>{grandTotal.toFixed(0)} ج.م</span>
             </div>
           </div>
         </motion.div>

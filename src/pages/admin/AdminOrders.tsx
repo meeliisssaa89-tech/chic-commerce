@@ -87,7 +87,7 @@ const AdminOrders = () => {
                     <td className="p-4 font-mono text-xs">{order.order_number}</td>
                     <td className="p-4">{order.customer_name}</td>
                     <td className="p-4 text-muted-foreground">{order.customer_phone}</td>
-                    <td className="p-4 font-bold">{order.total} ر.س</td>
+                    <td className="p-4 font-bold">{order.total} ج.م</td>
                     <td className="p-4">
                       <select
                         value={order.status}
@@ -142,18 +142,18 @@ const AdminOrders = () => {
                       {item.size && ` (${item.size})`}
                       {item.color && ` - ${item.color}`}
                     </span>
-                    <span className="font-medium">{item.price * item.quantity} ر.س</span>
+                    <span className="font-medium">{item.price * item.quantity} ج.م</span>
                   </div>
                 ))}
               </div>
 
               <div className="border-t border-border pt-3 space-y-1 text-sm">
-                <div className="flex justify-between"><span>المجموع الفرعي</span><span>{selectedOrder.subtotal} ر.س</span></div>
-                <div className="flex justify-between"><span>الشحن</span><span>{selectedOrder.shipping_cost == 0 ? "مجاني" : `${selectedOrder.shipping_cost} ر.س`}</span></div>
+                <div className="flex justify-between"><span>المجموع الفرعي</span><span>{selectedOrder.subtotal} ج.م</span></div>
+                <div className="flex justify-between"><span>الشحن</span><span>{selectedOrder.shipping_cost == 0 ? "مجاني" : `${selectedOrder.shipping_cost} ج.م`}</span></div>
                 {Number(selectedOrder.discount_amount) > 0 && (
-                  <div className="flex justify-between text-accent"><span>الخصم ({selectedOrder.promo_code})</span><span>-{selectedOrder.discount_amount} ر.س</span></div>
+                  <div className="flex justify-between text-accent"><span>الخصم ({selectedOrder.promo_code})</span><span>-{selectedOrder.discount_amount} ج.م</span></div>
                 )}
-                <div className="flex justify-between font-bold text-lg pt-2 border-t border-border"><span>الإجمالي</span><span>{selectedOrder.total} ر.س</span></div>
+                <div className="flex justify-between font-bold text-lg pt-2 border-t border-border"><span>الإجمالي</span><span>{selectedOrder.total} ج.م</span></div>
               </div>
             </div>
           )}

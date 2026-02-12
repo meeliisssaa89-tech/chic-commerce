@@ -92,10 +92,10 @@ const ProductPage = () => {
           <h1 className="font-display text-3xl font-bold mb-4">{product.name_ar}</h1>
 
           <div className="flex items-center gap-3 mb-6">
-            <span className="text-2xl font-bold">{finalPrice} ر.س</span>
+            <span className="text-2xl font-bold">{finalPrice} ج.م</span>
             {hasDiscount && (
               <>
-                <span className="text-lg text-muted-foreground line-through">{product.price} ر.س</span>
+                <span className="text-lg text-muted-foreground line-through">{product.price} ج.م</span>
                 <span className="bg-accent text-accent-foreground px-2 py-1 text-xs font-bold rounded">
                   خصم {Math.round(((product.price - product.discount_price!) / product.price) * 100)}%
                 </span>

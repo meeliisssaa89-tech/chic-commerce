@@ -27,7 +27,7 @@ const AdminDashboard = () => {
 
   const statCards = [
     { label: "إجمالي الطلبات", value: stats?.totalOrders || 0, icon: ShoppingCart },
-    { label: "الإيرادات", value: `${stats?.totalRevenue?.toFixed(0) || 0} ر.س`, icon: DollarSign },
+    { label: "الإيرادات", value: `${stats?.totalRevenue?.toFixed(0) || 0} ج.م`, icon: DollarSign },
     { label: "المنتجات", value: stats?.totalProducts || 0, icon: Package },
     { label: "طلبات معلقة", value: stats?.pendingOrders || 0, icon: TrendingUp },
   ];
@@ -76,7 +76,7 @@ const AdminDashboard = () => {
                     <tr key={order.id} className="border-b border-border hover:bg-muted/50">
                       <td className="p-3 font-mono text-xs">{order.order_number}</td>
                       <td className="p-3">{order.customer_name}</td>
-                      <td className="p-3 font-bold">{order.total} ر.س</td>
+                      <td className="p-3 font-bold">{order.total} ج.م</td>
                       <td className="p-3">
                         <Badge variant={statusVariant[order.status] || "outline"}>
                           {statusLabels[order.status] || order.status}
