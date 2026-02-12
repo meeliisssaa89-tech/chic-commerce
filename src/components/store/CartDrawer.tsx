@@ -58,7 +58,7 @@ const CartDrawer = () => {
                           {item.size && `المقاس: ${item.size}`} {item.color && `اللون: ${item.color}`}
                         </p>
                       )}
-                      <p className="font-bold text-sm mt-1">{item.price} ر.س</p>
+                      <p className="font-bold text-sm mt-1">{item.price} ج.م</p>
                       <div className="flex items-center gap-2 mt-2">
                         <button
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -88,7 +88,7 @@ const CartDrawer = () => {
               <div className="border-t border-border p-4 space-y-3">
                 <div className="flex justify-between font-bold text-lg">
                   <span>المجموع</span>
-                  <span>{totalPrice} ر.س</span>
+                  <span>{totalPrice} ج.م</span>
                 </div>
                 <Link to="/checkout" onClick={() => setIsOpen(false)}>
                   <Button className="w-full bg-charcoal text-cream hover:bg-accent hover:text-accent-foreground h-12 text-base font-bold">

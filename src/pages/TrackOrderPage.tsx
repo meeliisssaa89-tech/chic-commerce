@@ -80,7 +80,7 @@ const TrackOrderPage = () => {
                 </div>
                 <div className="text-left">
                   <p className="text-sm text-muted-foreground">الإجمالي</p>
-                  <p className="font-bold text-lg">{order.total} ر.س</p>
+                  <p className="font-bold text-lg">{order.total} ج.م</p>
                 </div>
               </div>
 
@@ -129,15 +129,15 @@ const TrackOrderPage = () => {
                 {order.order_items?.map((item: any) => (
                   <div key={item.id} className="flex justify-between text-sm">
                     <span>{item.product_name} × {item.quantity}</span>
-                    <span className="font-medium">{item.price * item.quantity} ر.س</span>
+                    <span className="font-medium">{item.price * item.quantity} ج.م</span>
                   </div>
                 ))}
               </div>
               <div className="border-t border-border pt-3 space-y-1 text-sm">
-                <div className="flex justify-between"><span>المجموع الفرعي</span><span>{order.subtotal} ر.س</span></div>
-                <div className="flex justify-between"><span>الشحن</span><span>{order.shipping_cost == 0 ? "مجاني" : `${order.shipping_cost} ر.س`}</span></div>
+                <div className="flex justify-between"><span>المجموع الفرعي</span><span>{order.subtotal} ج.م</span></div>
+                <div className="flex justify-between"><span>الشحن</span><span>{order.shipping_cost == 0 ? "مجاني" : `${order.shipping_cost} ج.م`}</span></div>
                 {Number(order.discount_amount) > 0 && (
-                  <div className="flex justify-between text-accent"><span>الخصم</span><span>-{order.discount_amount} ر.س</span></div>
+                  <div className="flex justify-between text-accent"><span>الخصم</span><span>-{order.discount_amount} ج.م</span></div>
                 )}
               </div>
             </CardContent>

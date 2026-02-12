@@ -65,10 +65,10 @@ const ProductCard = ({ id, name_ar, slug, price, discount_price, image, category
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-base">
-                  {hasDiscount ? discount_price : price} ر.س
+                  {hasDiscount ? discount_price : price} ج.م
                 </span>
                 {hasDiscount && (
-                  <span className="text-muted-foreground text-xs line-through">{price} ر.س</span>
+                  <span className="text-muted-foreground text-xs line-through">{price} ج.م</span>
                 )}
               </div>
               <motion.button

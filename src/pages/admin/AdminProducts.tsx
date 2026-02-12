@@ -163,11 +163,11 @@ const AdminProducts = () => {
                     <td className="p-4">
                       {product.discount_price ? (
                         <div>
-                          <span className="font-bold">{product.discount_price} ر.س</span>
+                          <span className="font-bold">{product.discount_price} ج.م</span>
                           <span className="text-muted-foreground line-through text-xs mr-2">{product.price}</span>
                         </div>
                       ) : (
-                        <span className="font-bold">{product.price} ر.س</span>
+                        <span className="font-bold">{product.price} ج.م</span>
                       )}
                     </td>
                     <td className="p-4">{product.stock}</td>
