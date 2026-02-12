@@ -3,16 +3,24 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, Search, ShoppingBag, X, MapPin } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
+import { useSiteSettings, useCategories } from "@/hooks/useSupabaseData";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { totalItems, setIsOpen } = useCart();
+  const { data: settings } = useSiteSettings();
+  const { data: categories } = useCategories();
+
+  const storeName = settings?.store_name || "TESTATORO";
+
+  const categoryLinks = (categories || []).map((cat) => ({
+    label: cat.name_ar,
+    href: `/category/${cat.slug}`,
+  }));
 
   const navLinks = [
     { label: "الرئيسية", href: "/" },
-    { label: "أحذية", href: "/category/shoes" },
-    { label: "أحزمة", href: "/category/belts" },
-    { label: "محافظ", href: "/category/wallets" },
+    ...categoryLinks,
     { label: "تتبع طلبك", href: "/track-order" },
     { label: "تواصل معنا", href: "/contact" },
   ];
@@ -25,7 +33,7 @@ const Header = () => {
         </button>
 
         <Link to="/" className="font-display text-2xl font-bold tracking-wider text-charcoal">
-          TESTATORO
+          {storeName}
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8">
