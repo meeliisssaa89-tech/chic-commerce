@@ -131,6 +131,14 @@ const AdminOrders = () => {
                 <div><span className="text-muted-foreground">الحالة:</span> <Badge variant={statusVariant[selectedOrder.status]}>{statusLabels[selectedOrder.status]}</Badge></div>
               </div>
               <div className="text-sm"><span className="text-muted-foreground">العنوان:</span> {selectedOrder.customer_address}</div>
+              {(selectedOrder as any).payment_method && (
+                <div className="text-sm bg-muted/50 rounded-lg p-3 space-y-1">
+                  <div><span className="text-muted-foreground">طريقة الدفع:</span> <span className="font-medium">{(selectedOrder as any).payment_method}</span></div>
+                  {(selectedOrder as any).transfer_number && (
+                    <div><span className="text-muted-foreground">رقم التحويل:</span> <span className="font-medium text-accent">{(selectedOrder as any).transfer_number}</span></div>
+                  )}
+                </div>
+              )}
               {selectedOrder.notes && <div className="text-sm"><span className="text-muted-foreground">ملاحظات:</span> {selectedOrder.notes}</div>}
 
               <div className="border-t border-border pt-3">

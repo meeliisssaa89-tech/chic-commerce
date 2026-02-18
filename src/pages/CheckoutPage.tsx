@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSiteSettings } from "@/hooks/useSupabaseData";
+import { useQuery } from "@tanstack/react-query";
 
 const CheckoutPage = () => {
   const { items, totalPrice, clearCart } = useCart();
@@ -18,6 +19,24 @@ const CheckoutPage = () => {
   const [orderNumber, setOrderNumber] = useState("");
   const [discount, setDiscount] = useState(0);
   const [promoApplied, setPromoApplied] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState("");
+  const [transferNumber, setTransferNumber] = useState("");
+
+  const { data: paymentMethods = [] } = useQuery({
+    queryKey: ["payment_methods"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("payment_methods")
+        .select("*")
+        .eq("active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const selectedMethod = paymentMethods.find((m) => m.id === selectedPayment);
+  const requiresTransfer = (selectedMethod as any)?.requires_transfer ?? false;
 
   const freeShippingThreshold = Number(settings?.free_shipping_threshold || 200);
   const shippingRate = Number(settings?.shipping_cost || 25);
@@ -53,6 +72,16 @@ const CheckoutPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (paymentMethods.length > 0 && !selectedPayment) {
+      toast({ title: "يرجى اختيار طريقة الدفع", variant: "destructive" });
+      return;
+    }
+    if (requiresTransfer && !transferNumber.trim()) {
+      toast({ title: "يرجى إدخال رقم الهاتف المحوّل منه", variant: "destructive" });
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -69,7 +98,9 @@ const CheckoutPage = () => {
           shipping_cost: shippingCost,
           discount_amount: discountAmount,
           total: grandTotal,
-        })
+          payment_method: selectedMethod?.name_ar || "الدفع عند الاستلام",
+          transfer_number: requiresTransfer ? transferNumber.trim() : null,
+        } as any)
         .select()
         .single();
 
@@ -88,13 +119,6 @@ const CheckoutPage = () => {
       const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
       if (itemsError) throw itemsError;
 
-      // Increment promo code uses
-      if (promoApplied && form.promo.trim()) {
-        await supabase.rpc("has_role", { _user_id: "00000000-0000-0000-0000-000000000000", _role: "admin" }).then(() => {
-          // We can't update promo_codes without admin, it's fine
-        });
-      }
-
       setOrderNumber(order.order_number);
       clearCart();
     } catch (err: any) {
@@ -112,9 +136,7 @@ const CheckoutPage = () => {
         <p className="text-muted-foreground mb-2">شكراً لك، سيتم التواصل معك قريباً لتأكيد الطلب</p>
         <p className="font-bold text-lg mb-8">رقم الطلب: {orderNumber}</p>
         <div className="flex gap-3 justify-center">
-          <Button onClick={() => navigate(`/track-order`)} variant="outline">
-            تتبع الطلب
-          </Button>
+          <Button onClick={() => navigate(`/track-order`)} variant="outline">تتبع الطلب</Button>
           <Button onClick={() => navigate("/")}>العودة للرئيسية</Button>
         </div>
       </motion.div>
@@ -144,16 +166,71 @@ const CheckoutPage = () => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">رقم الهاتف</label>
-            <Input required type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="05XXXXXXXX" />
+            <Input required type="tel" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="01XXXXXXXXX" />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">المدينة</label>
-            <Input required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="الرياض" />
+            <Input required value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="القاهرة" />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">العنوان التفصيلي</label>
             <Input required value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="الحي، الشارع، رقم المبنى" />
           </div>
+
+          {/* Payment Methods */}
+          {paymentMethods.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium mb-2">طريقة الدفع</label>
+              <div className="grid grid-cols-1 gap-2">
+                {paymentMethods.map((pm) => (
+                  <button
+                    key={pm.id}
+                    type="button"
+                    onClick={() => { setSelectedPayment(pm.id); setTransferNumber(""); }}
+                    className={`flex items-start gap-3 p-3 border rounded-lg text-right transition-all ${
+                      selectedPayment === pm.id
+                        ? "border-accent bg-accent/10"
+                        : "border-border hover:border-accent/50"
+                    }`}
+                  >
+                    <div className={`mt-0.5 w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${
+                      selectedPayment === pm.id ? "border-accent" : "border-muted-foreground"
+                    }`}>
+                      {selectedPayment === pm.id && <div className="w-2 h-2 rounded-full bg-accent" />}
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{pm.name_ar}</p>
+                      {pm.description && <p className="text-xs text-muted-foreground mt-0.5">{pm.description}</p>}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Transfer Number field (shown when payment requires transfer) */}
+          {requiresTransfer && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="bg-accent/5 border border-accent/20 rounded-lg p-4"
+            >
+              <label className="block text-sm font-medium mb-1 text-accent">
+                رقم الهاتف المحوّل منه *
+              </label>
+              <Input
+                required
+                value={transferNumber}
+                onChange={(e) => setTransferNumber(e.target.value)}
+                placeholder="01XXXXXXXXX"
+                className="border-accent/30 focus:border-accent"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                أدخل رقم الهاتف الذي تم التحويل منه لتأكيد الدفع
+              </p>
+            </motion.div>
+          )}
+
           <div>
             <label className="block text-sm font-medium mb-1">ملاحظات (اختياري)</label>
             <Input value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} placeholder="أي ملاحظات إضافية" />
@@ -199,6 +276,14 @@ const CheckoutPage = () => {
               <span>{grandTotal.toFixed(0)} ج.م</span>
             </div>
           </div>
+          {selectedMethod && (
+            <div className="mt-4 pt-4 border-t border-border">
+              <p className="text-sm text-muted-foreground">طريقة الدفع: <span className="font-medium text-foreground">{selectedMethod.name_ar}</span></p>
+              {transferNumber && (
+                <p className="text-sm text-muted-foreground mt-1">رقم التحويل: <span className="font-medium text-foreground">{transferNumber}</span></p>
+              )}
+            </div>
+          )}
         </motion.div>
       </div>
     </div>
