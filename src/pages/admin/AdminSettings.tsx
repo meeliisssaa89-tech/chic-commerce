@@ -36,7 +36,7 @@ const AdminSettings = () => {
     },
   });
 
-  const [newPayment, setNewPayment] = useState({ name: "", name_ar: "", description: "" });
+  const [newPayment, setNewPayment] = useState({ name: "", name_ar: "", description: "", requires_transfer: false });
   const [addingPayment, setAddingPayment] = useState(false);
 
   useEffect(() => {
@@ -82,9 +82,10 @@ const AdminSettings = () => {
         name_ar: newPayment.name_ar,
         description: newPayment.description || null,
         sort_order: (paymentMethods?.length || 0) + 1,
-      });
+        requires_transfer: newPayment.requires_transfer,
+      } as any);
       if (error) throw error;
-      setNewPayment({ name: "", name_ar: "", description: "" });
+      setNewPayment({ name: "", name_ar: "", description: "", requires_transfer: false });
       queryClient.invalidateQueries({ queryKey: ["admin", "payment_methods"] });
       toast({ title: "تم إضافة طريقة الدفع" });
     } catch (err: any) {
@@ -168,7 +169,7 @@ const AdminSettings = () => {
             <div className="border-t border-border pt-4 space-y-3">
               <p className="text-sm font-medium">إضافة طريقة دفع جديدة</p>
               <Input
-                placeholder="اسم طريقة الدفع بالعربي"
+                placeholder="اسم طريقة الدفع بالعربي (مثل: فودافون كاش)"
                 value={newPayment.name_ar}
                 onChange={(e) => setNewPayment({ ...newPayment, name_ar: e.target.value })}
               />
@@ -178,10 +179,19 @@ const AdminSettings = () => {
                 onChange={(e) => setNewPayment({ ...newPayment, name: e.target.value })}
               />
               <Input
-                placeholder="وصف (اختياري)"
+                placeholder="وصف / رقم المحفظة (اختياري)"
                 value={newPayment.description}
                 onChange={(e) => setNewPayment({ ...newPayment, description: e.target.value })}
               />
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={newPayment.requires_transfer}
+                  onChange={(e) => setNewPayment({ ...newPayment, requires_transfer: e.target.checked })}
+                  className="w-4 h-4 accent-primary"
+                />
+                <span className="text-sm">يتطلب إدخال رقم التحويل من العميل</span>
+              </label>
               <Button onClick={addPaymentMethod} disabled={addingPayment || !newPayment.name_ar.trim()} className="w-full">
                 <Plus className="w-4 h-4 ml-2" />
                 {addingPayment ? "جاري الإضافة..." : "إضافة طريقة دفع"}

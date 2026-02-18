@@ -154,11 +154,13 @@ export type Database = {
           id: string
           notes: string | null
           order_number: string
+          payment_method: string | null
           promo_code: string | null
           shipping_cost: number
           status: Database["public"]["Enums"]["order_status"]
           subtotal: number
           total: number
+          transfer_number: string | null
           updated_at: string
         }
         Insert: {
@@ -171,11 +173,13 @@ export type Database = {
           id?: string
           notes?: string | null
           order_number?: string
+          payment_method?: string | null
           promo_code?: string | null
           shipping_cost?: number
           status?: Database["public"]["Enums"]["order_status"]
           subtotal?: number
           total?: number
+          transfer_number?: string | null
           updated_at?: string
         }
         Update: {
@@ -188,11 +192,13 @@ export type Database = {
           id?: string
           notes?: string | null
           order_number?: string
+          payment_method?: string | null
           promo_code?: string | null
           shipping_cost?: number
           status?: Database["public"]["Enums"]["order_status"]
           subtotal?: number
           total?: number
+          transfer_number?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -205,6 +211,7 @@ export type Database = {
           id: string
           name: string
           name_ar: string
+          requires_transfer: boolean | null
           sort_order: number
           updated_at: string
         }
@@ -215,6 +222,7 @@ export type Database = {
           id?: string
           name: string
           name_ar: string
+          requires_transfer?: boolean | null
           sort_order?: number
           updated_at?: string
         }
@@ -225,6 +233,7 @@ export type Database = {
           id?: string
           name?: string
           name_ar?: string
+          requires_transfer?: boolean | null
           sort_order?: number
           updated_at?: string
         }
