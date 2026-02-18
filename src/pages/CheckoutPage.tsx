@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/contexts/CartContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSiteSettings } from "@/hooks/useSupabaseData";
 import { useQuery } from "@tanstack/react-query";
+import { Copy, Check } from "lucide-react";
 
 const CheckoutPage = () => {
   const { items, totalPrice, clearCart } = useCart();
@@ -21,6 +22,14 @@ const CheckoutPage = () => {
   const [promoApplied, setPromoApplied] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState("");
   const [transferNumber, setTransferNumber] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+    toast({ title: "تم نسخ الرقم ✓" });
+  };
 
   const { data: paymentMethods = [] } = useQuery({
     queryKey: ["payment_methods"],
@@ -186,7 +195,7 @@ const CheckoutPage = () => {
                   <button
                     key={pm.id}
                     type="button"
-                    onClick={() => { setSelectedPayment(pm.id); setTransferNumber(""); }}
+                    onClick={() => { setSelectedPayment(pm.id); setTransferNumber(""); setCopied(false); }}
                     className={`flex items-start gap-3 p-3 border rounded-lg text-right transition-all ${
                       selectedPayment === pm.id
                         ? "border-accent bg-accent/10"
@@ -200,7 +209,6 @@ const CheckoutPage = () => {
                     </div>
                     <div>
                       <p className="font-medium text-sm">{pm.name_ar}</p>
-                      {pm.description && <p className="text-xs text-muted-foreground mt-0.5">{pm.description}</p>}
                     </div>
                   </button>
                 ))}
@@ -208,28 +216,62 @@ const CheckoutPage = () => {
             </div>
           )}
 
-          {/* Transfer Number field (shown when payment requires transfer) */}
-          {requiresTransfer && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="bg-accent/5 border border-accent/20 rounded-lg p-4"
-            >
-              <label className="block text-sm font-medium mb-1 text-accent">
-                رقم الهاتف المحوّل منه *
-              </label>
-              <Input
-                required
-                value={transferNumber}
-                onChange={(e) => setTransferNumber(e.target.value)}
-                placeholder="01XXXXXXXXX"
-                className="border-accent/30 focus:border-accent"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                أدخل رقم الهاتف الذي تم التحويل منه لتأكيد الدفع
-              </p>
-            </motion.div>
-          )}
+          {/* Transfer info block */}
+          <AnimatePresence>
+            {requiresTransfer && selectedMethod && (
+              <motion.div
+                key="transfer-block"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+                className="rounded-xl border-2 border-accent overflow-hidden"
+              >
+                {/* Store transfer number — big & copyable */}
+                <div className="bg-accent/10 px-5 py-4 text-center">
+                  <p className="text-xs text-muted-foreground mb-1">حوّل المبلغ على رقم {selectedMethod.name_ar}</p>
+                  {selectedMethod.description ? (
+                    <>
+                      <p className="text-3xl font-bold tracking-widest text-accent mb-3 font-mono">
+                        {selectedMethod.description}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => handleCopy(selectedMethod.description!)}
+                        className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                          copied
+                            ? "bg-green-500 text-white"
+                            : "bg-accent text-accent-foreground hover:opacity-90"
+                        }`}
+                      >
+                        {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        {copied ? "تم النسخ!" : "انسخ الرقم"}
+                      </button>
+                    </>
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic">لم يُحدَّد رقم التحويل بعد</p>
+                  )}
+                </div>
+
+                {/* Sender number input */}
+                <div className="bg-card px-5 py-4">
+                  <label className="block text-sm font-medium mb-2">
+                    أدخل رقم الهاتف الذي حوّلت منه *
+                  </label>
+                  <Input
+                    required
+                    value={transferNumber}
+                    onChange={(e) => setTransferNumber(e.target.value)}
+                    placeholder="01XXXXXXXXX"
+                    className="text-center text-lg font-mono border-accent/40 focus:border-accent"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1 text-center">
+                    نحتاج هذا الرقم لتأكيد استلام الدفع
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div>
             <label className="block text-sm font-medium mb-1">ملاحظات (اختياري)</label>
